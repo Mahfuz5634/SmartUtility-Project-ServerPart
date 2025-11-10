@@ -45,7 +45,26 @@ async function run() {
       const result = await cursor.toArray();
 
       res.send(result);
-    }) / (await client.db("admin").command({ ping: 1 }));
+    });
+
+    app.get("/allbilltwo", async (req, res) => {
+      try {
+        const category = req.query.category; 
+        let query = {};
+
+        if (category && category !== "All") {
+          query = { category: category };
+        }
+
+        const result = await billData.find(query).toArray();
+        res.send(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).send({ message: "Error fetching bills" });
+      }
+    });
+
+    await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
