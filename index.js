@@ -23,7 +23,7 @@ async function run() {
     await client.connect();
     const db = client.db("smartutility");
     const billData = db.collection("billdata");
-    const paybill =db.collection('paybill')
+    const paybill = db.collection("paybill");
 
     app.get("/recentbill", async (req, res) => {
       const cursor = billData.find().limit(6);
@@ -32,13 +32,36 @@ async function run() {
       res.send(result);
     });
 
-    app.delete('/bills/:id', async (req,res)=>{
-       const id=req.params.id;
-       const query={_id: new ObjectId(id)};
-       const result=await paybill.deleteOne(query);
-       res.send(result);
+    app.delete("/bills/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await paybill.deleteOne(query);
+      res.send(result);
+    });
 
-    })
+    app.put("/bills/:id", async (req, res) => {
+      const { id } = req.params;
+      const { username, address, phone, amount, date } = req.body;
+
+      const updatedBill = {
+        username,
+        address,
+        phone,
+        amount: Number(amount),
+        date,
+      };
+
+      const result = paybill.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updatedBill }
+      );
+
+      if (result.matchedCount === 1) {
+        res.json({ message: "Bill updated successfully" });
+      } else {
+        res.status(404).json({ error: "Bill not found" });
+      }
+    });
 
     app.get("/specificBill/:id", async (req, res) => {
       const id = req.params.id;
@@ -49,17 +72,17 @@ async function run() {
       res.send(result);
     });
 
-    app.get('/payments',async(req,res)=>{
-      const email=req.query.email;
-      const result= await paybill.find({email}).toArray();
+    app.get("/payments", async (req, res) => {
+      const email = req.query.email;
+      const result = await paybill.find({ email }).toArray();
       res.send(result);
-    })
+    });
 
-    app.post("/payBill",async (req,res)=>{
-       const data=req.body;
-       const result= await paybill.insertOne(data);
-       res.send(result)
-    })
+    app.post("/payBill", async (req, res) => {
+      const data = req.body;
+      const result = await paybill.insertOne(data);
+      res.send(result);
+    });
 
     app.get("/allbill", async (req, res) => {
       const cursor = billData.find();
@@ -70,7 +93,7 @@ async function run() {
 
     app.get("/allbilltwo", async (req, res) => {
       try {
-        const category = req.query.category; 
+        const category = req.query.category;
         let query = {};
 
         if (category && category !== "All") {
