@@ -32,6 +32,14 @@ async function run() {
       res.send(result);
     });
 
+    app.delete('/bills/:id', async (req,res)=>{
+       const id=req.params.id;
+       const query={_id: new ObjectId(id)};
+       const result=await paybill.deleteOne(query);
+       res.send(result);
+
+    })
+
     app.get("/specificBill/:id", async (req, res) => {
       const id = req.params.id;
 
