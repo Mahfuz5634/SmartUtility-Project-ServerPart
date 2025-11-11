@@ -23,6 +23,7 @@ async function run() {
     await client.connect();
     const db = client.db("smartutility");
     const billData = db.collection("billdata");
+    const paybill =db.collection('paybill')
 
     app.get("/recentbill", async (req, res) => {
       const cursor = billData.find().limit(6);
@@ -39,6 +40,12 @@ async function run() {
 
       res.send(result);
     });
+
+    app.post("/payBill",async (req,res)=>{
+       const data=req.body;
+       const result= await paybill.insertOne(data);
+       res.send(result)
+    })
 
     app.get("/allbill", async (req, res) => {
       const cursor = billData.find();
