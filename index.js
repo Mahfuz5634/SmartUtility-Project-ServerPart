@@ -41,6 +41,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get('/payments',async(req,res)=>{
+      const email=req.query.email;
+      const result= await paybill.find({email}).toArray();
+      res.send(result);
+    })
+
     app.post("/payBill",async (req,res)=>{
        const data=req.body;
        const result= await paybill.insertOne(data);
