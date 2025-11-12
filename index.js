@@ -1,12 +1,17 @@
 const express = require("express");
+const dotenv = require("dotenv");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const app = express();
+
 const port = process.env.PORT || 3000;
 
-const uri =
-  "mongodb+srv://smartutility:Y6LBeGswifoq8rwV@cluster0.6jar5hr.mongodb.net/?appName=Cluster0";
 
+
+dotenv.config();
+
+
+const uri = process.env.MONGO_URI;
 app.use(cors());
 app.use(express.json());
 
